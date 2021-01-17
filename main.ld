@@ -21,7 +21,7 @@
  * This is part of revision 2.1.0.12573 of the EK-TM4C1294XL Firmware Package.
  *
  *****************************************************************************/
-
+ENTRY(ResetISR)
 MEMORY
 {
     FLASH (rx) : ORIGIN = 0x00000000, LENGTH = 0x00100000
