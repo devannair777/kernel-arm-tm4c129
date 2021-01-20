@@ -1,15 +1,17 @@
 /* Linker script to configure memory regions. */
-__rom_start = 0x00000000;
-__rom_length = 0x00100000;
+__flash_start = 0x00000000;
+__flash_length = 0x00100000;
+__rom_start = 0x02000000;
+__rom_length = 0x000F0000;
 __sram_start = 0x20000000;
 __sram_length = 0x00040000;
 
-INPUT(startup_tm4c129.o)
-
 MEMORY
 {
-  FLASH (rx) : ORIGIN = __rom_start, LENGTH = __rom_length   /* 1024k */
+  FLASH (rx) : ORIGIN = __flash_start, LENGTH = __flash_length   /* 1024k */
+  ROM (rwx) : ORIGIN = __rom_start, LENGTH = __rom_length   /* 960k */ 
   RAM (rwx)  : ORIGIN = __sram_start, LENGTH = __sram_length   /*  256k */
+  
 }
 
 /* Library configurations */
@@ -45,13 +47,16 @@ ENTRY(Reset_Handler)
 __stack_size = 512;
 SECTIONS
 {
-	.isr_vector : {        /* the vector table goes FIRST into ROM */
+
+    .isr_vector : {        /* the vector table goes FIRST into ROM */
         KEEP(*(.isr_vector)) /* vector table */
         . = ALIGN(4);
-    	} >FLASH
-	
+    } >FLASH
+
 	.text :
 	{
+		*(.text)
+        *(.text.*)
 		/* .ctors */
 		*crtbegin.o(.ctors)
 		*crtbegin?.o(.ctors)
@@ -70,6 +75,8 @@ SECTIONS
 
 		KEEP(*(.eh_frame*))
 	} > FLASH
+	
+		__etext = .;
 
 	.ARM.extab :
 	{
@@ -83,12 +90,27 @@ SECTIONS
 	} > FLASH
 	__exidx_end = .;
 
-	__etext = .;
+	
+
+	.stack : 
+	{
+		. = ALIGN(4);
+		__stack_start__ = .;
+		. = . + __stack_size;
+		. = ALIGN(4);
+		__stack_end__ = .;
+		__stack_top = __stack_end__;
+		PROVIDE(__stack = __stack_top);
+
+	} > RAM
+
+
 
 	.data : AT (__etext)
 	{
 		__data_start__ = .;
 		*(vtable)
+		*(.data)
 		*(.data*)
 
 		. = ALIGN(4);
@@ -119,6 +141,7 @@ SECTIONS
 
 	} > RAM
 
+	
 	.bss :
 	{
 		. = ALIGN(4);
@@ -147,13 +170,13 @@ SECTIONS
  */
 	/* Set stack top to end of RAM, and stack limit move down by
 	 * size of stack_dummy section */
-	__stack_top = ORIGIN(RAM) + LENGTH(RAM);
+	/* __stack_top = ORIGIN(RAM) + LENGTH(RAM); */
 	/* __StackLimit = __StackTop - SIZEOF(.stack_dummy); */
-	__stack_limit = __stack_top - __stack_size;
-	PROVIDE(__stack = __stack_top);
+	/* __stack_limit = __stack_top - __stack_size;
+	PROVIDE(__stack = __stack_top); */
 
 	/* Check if data + heap + stack exceeds RAM limit */
-	ASSERT(__stack_limit >= __HeapLimit, "region RAM overflowed with stack")
+	/* ASSERT(__stack_limit >= __HeapLimit, "region RAM overflowed with stack") */
 }
 
 /* 

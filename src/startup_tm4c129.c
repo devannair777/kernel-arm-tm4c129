@@ -10,10 +10,18 @@
  */ 
 #include <stdint.h>
 
+void main(void);
+
 extern uintptr_t __stack_top;
 
-void Reset_Handler(void)                    __attribute__((weak));
-void Processor_Fault_Handler(void)          __attribute__((naked));
+extern uint32_t __etext;
+extern uint32_t __data_start__;
+extern uint32_t __data_end__;
+extern uint32_t __bss_start__;
+extern uint32_t __bss_end__;
+
+void Reset_Handler(void)                                         ;
+void Processor_Fault_Handler(void)                               ;
 void System_Handler(void)                   __attribute__((weak));
 void Interrupt_Service_Routine(void)        __attribute__((weak));
 
@@ -23,10 +31,10 @@ void Interrupt_Service_Routine(void)        __attribute__((weak));
 
 ######################################################*/
 
-void HardFault_Handler(void)                 __attribute__((naked,alias("Processor_Fault_Handler")));
-void MemManage_Handler(void)                 __attribute__((naked,alias("Processor_Fault_Handler")));    
-void BusFault_Handler(void)                  __attribute__((naked,alias("Processor_Fault_Handler")));
-void UsageFault_Handler(void)                __attribute__((naked,alias("Processor_Fault_Handler")));
+void HardFault_Handler(void)                 __attribute__((weak,alias("Processor_Fault_Handler")));
+void MemManage_Handler(void)                 __attribute__((weak,alias("Processor_Fault_Handler")));    
+void BusFault_Handler(void)                  __attribute__((weak,alias("Processor_Fault_Handler")));
+void UsageFault_Handler(void)                __attribute__((weak,alias("Processor_Fault_Handler")));
 
 /*####################################################
 
@@ -151,7 +159,8 @@ void GPIOPortQ7_IRQHandler(void)            __attribute__((weak,alias("Interrupt
 
 ######################################################*/
 
-const uintptr_t __vector_table[] __attribute__((section(".isr_vector"))) = {
+__attribute__((section(".isr_vector")))
+const uintptr_t __vector_table[]  = {
 /*  Check
 uint32_t max (4294967295U)
 uintptr_t max (4294967295U)  //So they are of same size, so it could be legally 
@@ -305,7 +314,26 @@ void Reset_Handler(void)
 {
     //Reset Entry code
 
+    uint32_t initialized_data_size = (uintptr_t)&(__data_end__) - (uintptr_t)&(__data_start__);
+    uint32_t* pSrc = (uint32_t *) (& __etext);
+    uint32_t* pDst = (uint32_t *) (& __data_start__);
+
+    //Copy all initialized variables from .text section to .data section in SRAM
+    for(uint32_t i = 0; i< initialized_data_size;i ++)
+    {
+        *pDst++ = *pSrc++;
+    }
+
+    //Set all uninitialized variables to zero in .bss section
+
+    uint32_t uninitialized_data_size = (uintptr_t)&(__bss_end__) - (uintptr_t)&(__bss_start__);
+    for(uint32_t i = 0; i< uninitialized_data_size; i++)
+    {
+        *pDst++ = 0;
+    }
+
     //Main starts here
+    main();
 }
 
 void System_Handler(void)
@@ -315,22 +343,20 @@ void System_Handler(void)
 
 void Interrupt_Service_Routine(void)
 {
-    //ISR
+    //Default ISR
+    //Do nothing
 }
-
-void Processor_Fault_Handler (void)
+__attribute__((naked)) 
+void Processor_Fault_Handler(void)
 {
     // Processor Fault code
         __asm volatile (
-        "    ldr r0,=str_bus\n\t"
+        "    ldr r0,=str_PFault\n\t"
         "    mov r1,#1\n\t"
-        "str_bus: .asciz \"ProcessorFault\"\n\t"
+        "str_PFault: .asciz \"Processor Fault\"\n\t"
         "  .align 2\n\t"
     );
 }
-
-
-
 /*
 
         "    b assert_failed\n\t"

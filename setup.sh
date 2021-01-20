@@ -24,3 +24,7 @@ rm -rf lm4tools
 ###arm-none-eabi-objdump -t gcc/main.axf
 ###To flash the compiled binaries into the dev-board
 ###lm4flash -v gcc/blinky.bin
+###For openocd debugging with gdb
+###Download and install openocd, GNU-gdb
+###Use the startup script for the EK-TM4C129x board
+###openocd -f openocd/tcl/board/ti_ek-tm4c1294xl.cfg

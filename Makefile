@@ -4,12 +4,10 @@
 #
 #******************************************************************************
 
-#
-# Defines the part type that this project uses.
-#
-PART=TM4C1294NCPDT
+
 BIN=${COMPILER}/main.axf
-LDNAME=main.ld
+LDNAME=tm4c129.ld
+LISTDIR=Listing
 
 #
 # The base directory for TivaWare.
@@ -27,10 +25,11 @@ include makedefs
 IPATH=inc
 
 #
-# The default rule, which causes the blinky example to be built.
+# The default rule.
 #
 all: ${COMPILER}
-all: ${BIN}
+all: ${BIN}	
+
 
 #
 # The rule to clean out all the build products.
@@ -44,6 +43,7 @@ clean:
 ${COMPILER}:
 	@mkdir -p ${COMPILER}
 	@mkdir -p ${COMPILER}/${ODIR}
+	@mkdir -p ${COMPILER}/${LISTDIR}
 
 
 #
@@ -61,6 +61,8 @@ flash:
 
 assembly:
 	${PREFIX}-objdump -d ${BIN}
+	${PREFIX}-objdump -s ${BIN} 
+	${PREFIX}-objdump -h ${BIN}
 
 
 #

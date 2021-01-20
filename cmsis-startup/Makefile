@@ -1,24 +1,6 @@
 #******************************************************************************
 #
-# Makefile - Rules for building the blinky example.
-#
-# Copyright (c) 2013-2014 Texas Instruments Incorporated.  All rights reserved.
-# Software License Agreement
-# 
-# Texas Instruments (TI) is supplying this software for use solely and
-# exclusively on TI's microcontroller products. The software is owned by
-# TI and/or its suppliers, and is protected under applicable copyright
-# laws. You may not combine this software with "viral" open-source
-# software in order to form a larger program.
-# 
-# THIS SOFTWARE IS PROVIDED "AS IS" AND WITH ALL FAULTS.
-# NO WARRANTIES, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING, BUT
-# NOT LIMITED TO, IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-# A PARTICULAR PURPOSE APPLY TO THIS SOFTWARE. TI SHALL NOT, UNDER ANY
-# CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL, OR CONSEQUENTIAL
-# DAMAGES, FOR ANY REASON WHATSOEVER.
-# 
-# This is part of revision 2.1.0.12573 of the EK-TM4C1294XL Firmware Package.
+# GNU GPLv2 License
 #
 #******************************************************************************
 
@@ -31,7 +13,7 @@ PART=TM4C1294NCPDT
 #
 ROOT=.
 
-IPATH=../inc
+IPATH=.
 
 #
 # Include the common make definitions.
@@ -54,8 +36,8 @@ SCATTERgcc_main=tm4c129.ld
 #
 
 clean:
-	@rm *.d
 	@rm *.o
+	@rm *.d
 	@rm *.axf
 	@rm *.bin
 
@@ -63,23 +45,19 @@ clean:
 # Show Assembly
 #
 
-assembly: startup_tm4c129.o
-assembly: main.axf
-main.axf: main.o 
+main.axf: main.o startup_tm4c129.o
+
 assembly:
-	${PREFIX}-objdump -s main.axf
-	${PREFIX}-objdump -t main.axf
-	@rm *.d
-	@rm *.o
-	@rm *.axf
-	@rm *.bin
-
-
-
+	@echo "Complete Sector View";
+	@${PREFIX}-objdump -s main.axf
+	@echo "Disassembly";
+	@${PREFIX}-objdump -d main.axf
+	
 test:
-	@echo ${LIBGCC} 
-	@echo ${LIBC} 
-	@echo ${LIBM} 
+	@echo ${LIBGCC_DIR}	
+	@echo ${LIBC_DIR}
+	@echo ${LIBC}	
+
 #
 # Include the automatically generated dependency files.
 #
