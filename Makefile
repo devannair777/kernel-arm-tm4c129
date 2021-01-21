@@ -4,32 +4,32 @@
 #
 #******************************************************************************
 
-
-BIN=${COMPILER}/main.axf
 LDNAME=tm4c129.ld
-LISTDIR=Listing
+SRCDIR=src
+ODIR=obj
+LISTDIR=listing
+TARGETDIR=bin
+BIN=${COMPILER}/${TARGETDIR}/main.axf
 
-#
 # The base directory for TivaWare.
-#
+
 ROOT=.
 
 #
 # Include the common make definitions.
 #
 include makedefs
-
 #
 # Where to find header files that do not live in the source directory.
 #
 IPATH=inc
-
 #
 # The default rule.
 #
+
 all: ${COMPILER}
 all: ${BIN}	
-
+${BIN}: ${OBJS}
 
 #
 # The rule to clean out all the build products.
@@ -43,26 +43,20 @@ clean:
 ${COMPILER}:
 	@mkdir -p ${COMPILER}
 	@mkdir -p ${COMPILER}/${ODIR}
+	@mkdir -p ${COMPILER}/${TARGETDIR}
 	@mkdir -p ${COMPILER}/${LISTDIR}
 
-
-#
-# Rules for building the kernel
-#
-
-${BIN}: ${OBJS}
-
-
 # Flash the binary
-flash:
-	lm4flash -v gcc/main.bin
+flash: ${BIN}
+	lm4flash -v ${^:.axf=.bin}
 
 # Show Assembly
 
 assembly:
-	${PREFIX}-objdump -d ${BIN}
-	${PREFIX}-objdump -s ${BIN} 
-	${PREFIX}-objdump -h ${BIN}
+	@${PREFIX}-objdump -d ${BIN} > ${COMPILER}/${LISTDIR}/disassembly 
+	@${PREFIX}-objdump -s ${BIN} > ${COMPILER}/${LISTDIR}/entire 
+	@${PREFIX}-objdump -h ${BIN} > ${COMPILER}/${LISTDIR}/sectors 
+	@echo Check ${COMPILER}/${LISTDIR} for files ...
 
 
 #

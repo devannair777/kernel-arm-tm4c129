@@ -14,8 +14,11 @@ MEMORY
   
 }
 
+SEARCH_DIR(/usr/lib/arm-none-eabi/newlib/thumb/v7e-m+fp/softfp)
+SEARCH_DIR(/usr/lib/gcc/arm-none-eabi/9.2.1)
+
 /* Library configurations */
-GROUP(libgcc.a libc.a libm.a libnosys.a)
+GROUP(libc_nano.a libm.a libnosys.a libgcc.a)
 
 /* Linker script to place sections and symbol values. Should be used together
  * with other linker script that defines memory regions FLASH and RAM.

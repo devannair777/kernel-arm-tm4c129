@@ -309,9 +309,14 @@ casted from a pointer with the value given by the arg
                 0,
                 0    
 };
-
+void _init(void);
+void _init(void)
+{
+    //Init
+}
 void Reset_Handler(void)
 {
+    extern int __libc_init_array(void);
     //Reset Entry code
 
     uint32_t initialized_data_size = (uintptr_t)&(__data_end__) - (uintptr_t)&(__data_start__);
@@ -332,6 +337,7 @@ void Reset_Handler(void)
         *pDst++ = 0;
     }
 
+    __libc_init_array();
     //Main starts here
     main();
 }
