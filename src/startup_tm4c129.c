@@ -343,7 +343,8 @@ void Reset_Handler(void)
 
     uint32_t initialized_data_size = (uintptr_t)&(__data_end__) - (uintptr_t)&(__data_start__);
     //Copy all initialized variables from .text section to .data section in SRAM
-    uint32_t* sbss = startup_memcpy(& __exidx_end,& __data_start__,initialized_data_size);
+    uint32_t* exidx_end = startup_memcpy(& __exidx_end,& __data_start__,initialized_data_size);
+    uint32_t* sbss = exidx_end + initialized_data_size; // Go to beginning of .bss sector
     //Set all uninitialized variables to zero in .bss section
     uint32_t uninitialized_data_size = (uintptr_t)&(__bss_end__) - (uintptr_t)&(__bss_start__);
     startup_memset(sbss,0,uninitialized_data_size);    

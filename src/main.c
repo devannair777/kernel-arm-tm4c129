@@ -5,7 +5,6 @@ uint32_t config_dir_value = 0x02;
 uint32_t config_den_value = 0xff;
 uint32_t uart0_test;
 
-
 int main()
 {
     sysctl_clock_init(XTAL_25MHZ);
