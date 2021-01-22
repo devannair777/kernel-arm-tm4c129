@@ -47,7 +47,7 @@ GROUP(libc_nano.a libm.a libnosys.a libgcc.a)
  *   __stack
  */
 ENTRY(Reset_Handler)
-__stack_size = 512;
+__stack_size = 1024;
 SECTIONS
 {
 

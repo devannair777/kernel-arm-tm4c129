@@ -310,6 +310,27 @@ casted from a pointer with the value given by the arg
                 0,
                 0    
 };
+
+static void* startup_memcpy(void * dst,const void * src, uint32_t sz)
+{
+    char* d = dst;
+    const char* s = src;
+    while(sz --)
+    {
+        *d++ = *s++;
+    }
+    return dst;
+}
+
+static void* startup_memset(void *dst,int c, uint32_t sz)
+{
+    char* d = dst;
+    while(sz --)
+    {
+        *d++ = c;
+    }
+    return dst;
+}
 void _init(void);
 void _init(void)
 {
@@ -321,23 +342,13 @@ void Reset_Handler(void)
     //Reset Entry code
 
     uint32_t initialized_data_size = (uintptr_t)&(__data_end__) - (uintptr_t)&(__data_start__);
-    uint32_t* pSrc = (uint32_t *) (& __exidx_end);
-    uint32_t* pDst = (uint32_t *) (& __data_start__);
-
     //Copy all initialized variables from .text section to .data section in SRAM
-    for(uint32_t i = 0; i< initialized_data_size;i ++)
-    {
-        *pDst++ = *pSrc++;
-    }
-
+    uint32_t* sbss = startup_memcpy(& __exidx_end,& __data_start__,initialized_data_size);
     //Set all uninitialized variables to zero in .bss section
-
     uint32_t uninitialized_data_size = (uintptr_t)&(__bss_end__) - (uintptr_t)&(__bss_start__);
-    for(uint32_t i = 0; i< uninitialized_data_size; i++)
-    {
-        *pDst++ = 0;
-    }
+    startup_memset(sbss,0,uninitialized_data_size);    
 
+    //Initialize all the static constructors
     __libc_init_array();
     //Main starts here
     main();
