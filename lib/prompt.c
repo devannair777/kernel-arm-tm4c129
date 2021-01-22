@@ -20,9 +20,16 @@ void serial_init(void)
 		
 }
 
+static void serial_print(char c)
+{
+	while((UART0->FR & (1<<5)) != 0);
+    UART0->DR = c;
+}
+
 void _putchar(char c)
 {
   //lib/printf.c over UART0
-    while((UART0->FR & (1<<5)) != 0);
-    UART0->DR = c;
+	serial_print(c);
+    
 }
+

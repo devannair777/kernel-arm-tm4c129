@@ -4,8 +4,6 @@
 #include "cmsis/tm4c_cmsis.h"
 #include "lib/printf.h"
 
-void serial_init(void);
-
-void _putchar(char c);
+void serial_init(void); 
 
 #endif // __PROMPT_H__

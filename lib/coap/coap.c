@@ -8,7 +8,7 @@ int add(int x, int y)
     return x+y;
 }
 
-/* 
+
 
 /*
     Lower level implementation of _(fcn_names) for stdlib functions
@@ -33,6 +33,7 @@ int _write (int fd, char *buf, int count) {
   return 2;
 }
 */
+
 /*
     Linker description file doesnt have heap allocated
     So change it first before debuggig on target hardware
@@ -44,10 +45,10 @@ void *_sbrk(int incr) {
   heap += incr;
   return prev_heap;
 }  */
+
 /*  
     End of lower level implementations
     required for stdlib
  */
 
 
- */
