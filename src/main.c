@@ -1,10 +1,16 @@
 #include "kernel.h"
 #include <stdio.h>
 #include <sys/stat.h>
+/* #include "lib/printf.h" */
 
 uint32_t config_dir_value = 0x02;
 uint32_t config_den_value = 0xff;
 uint32_t uart0_test;
+
+void _putchar(char c)
+{
+  //Do nothing checking lib/printf.c
+}
 
 /* 
     Lower level implementation of _(fcn_names) for stdlib functions

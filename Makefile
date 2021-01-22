@@ -7,6 +7,7 @@
 LDNAME=tm4c129.ld
 SRCDIR=src
 ODIR=obj
+LIBDIR=lib
 LISTDIR=listing
 TARGETDIR=bin
 BIN=${COMPILER}/${TARGETDIR}/main.axf
@@ -27,9 +28,14 @@ IPATH=inc
 # The default rule.
 #
 
-all: ${COMPILER}
-all: ${BIN}	
-${BIN}: ${OBJS}
+DEPS=${SRC_OBJS} 
+
+ifdef LIB
+DEPS+=${LIB_OBJS}
+endif
+
+all:clean ${COMPILER} ${BIN} 
+${BIN}: ${DEPS}
 
 #
 # The rule to clean out all the build products.
@@ -43,6 +49,7 @@ clean:
 ${COMPILER}:
 	@mkdir -p ${COMPILER}
 	@mkdir -p ${COMPILER}/${ODIR}
+	@mkdir -p ${LIBDIR}/${ODIR}
 	@mkdir -p ${COMPILER}/${TARGETDIR}
 	@mkdir -p ${COMPILER}/${LISTDIR}
 

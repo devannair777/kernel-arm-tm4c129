@@ -108,8 +108,7 @@ SECTIONS
 	} > RAM
 
 
-
-	.data : AT (__etext)
+	.data : AT (__exidx_end)
 	{
 		__data_start__ = .;
 		*(vtable)

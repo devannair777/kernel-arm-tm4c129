@@ -15,6 +15,7 @@ void main(void);
 extern uintptr_t __stack_top;
 
 extern uint32_t __etext;
+extern uint32_t __exidx_end;
 extern uint32_t __data_start__;
 extern uint32_t __data_end__;
 extern uint32_t __bss_start__;
@@ -320,7 +321,7 @@ void Reset_Handler(void)
     //Reset Entry code
 
     uint32_t initialized_data_size = (uintptr_t)&(__data_end__) - (uintptr_t)&(__data_start__);
-    uint32_t* pSrc = (uint32_t *) (& __etext);
+    uint32_t* pSrc = (uint32_t *) (& __exidx_end);
     uint32_t* pDst = (uint32_t *) (& __data_start__);
 
     //Copy all initialized variables from .text section to .data section in SRAM
