@@ -34,7 +34,7 @@ ifdef LIB
 DEPS+=${LIB_OBJS}
 endif
 
-all:clean ${COMPILER} ${BIN} 
+all:clean ${COMPILER} ${BIN}
 ${BIN}: ${DEPS}
 
 #
@@ -49,7 +49,6 @@ clean:
 ${COMPILER}:
 	@mkdir -p ${COMPILER}
 	@mkdir -p ${COMPILER}/${ODIR}
-	@mkdir -p ${LIBDIR}/${ODIR}
 	@mkdir -p ${COMPILER}/${TARGETDIR}
 	@mkdir -p ${COMPILER}/${LISTDIR}
 

@@ -20,10 +20,9 @@ endif
 
 PREFIX=arm-none-eabi
 
-SRCS=$(wildcard $(SRCDIR)/*.c)
-SRC_OBJS=$(patsubst $(SRCDIR)/%.c,${COMPILER}/${ODIR}/%.o,$(SRCS))
-LIBS=$(wildcard $(LIBDIR)/*.c)
-LIB_OBJS=$(patsubst $(LIBDIR)/%.c,${LIBDIR}/${ODIR}/%.o,$(LIBS))
+SRCS=$(notdir $(shell find $(SRCDIR) -name '*.c'))
+SRC_OBJS=$(patsubst %.c,${COMPILER}/${ODIR}/%.o,$(SRCS))
+LIB_OBJS=$(wildcard $(LIBDIR)/${ODIR}/*.o)
 
 #
 # The command for calling the compiler.
@@ -73,8 +72,8 @@ LD=${PREFIX}-ld
 # The flags passed to the linker.
 #--gc-sections
 
-LDFLAGS=--gc-sections     \
-		--architecture=cortex-m4   \
+LDFLAGS=--gc-sections     						\
+		--architecture=cortex-m4   				\
 		-Map=${COMPILER}/${LISTDIR}/mapfile.map \
 		
 #
@@ -100,29 +99,16 @@ AFLAGS+=${patsubst %,-I%,${subst :, ,${IPATH}}}
 CFLAGS+=${patsubst %,-I%,${subst :, ,${IPATH}}}
 
 #
-# The rule for building the object file from each C library file.
-#
-${LIBDIR}/${ODIR}/%.o:${LIBDIR}/%.c 
-	@if [ 'x${VERBOSE}' = x ];                            \
-	 then                                                 \
-	     echo "  CC    ${<}";                             \
-	 else                                                 \
-	     echo ${CC} ${CFLAGS} -D${COMPILER} -o ${@} ${<}; \
-	 fi
-	@${CC} ${CFLAGS} -D${COMPILER} -o ${@} ${<}
-	@rm ${LIBDIR}/${ODIR}/*.d
-
-#
 # The rule for building the object file from each C source file.
 #
-${COMPILER}${SUFFIX}/${ODIR}/%.o:${SRCDIR}/%.c 
-	@if [ 'x${VERBOSE}' = x ];                            \
-	 then                                                 \
-	     echo "  CC    ${<}";                             \
-	 else                                                 \
-	     echo ${CC} ${CFLAGS} -D${COMPILER} -o ${@} ${<}; \
+${COMPILER}${SUFFIX}/${ODIR}/%.o: 
+	@if [ 'x${VERBOSE}' = x ];                            					\
+	 then                                                 					\
+	     echo "  CC    $(shell find ${SRCDIR} -name ${notdir ${@:.o=.c}})"; \
+	 else                                                 					\
+	     echo ${CC} ${CFLAGS} -D${COMPILER} -o ${@} ${<}; 					\
 	 fi
-	@${CC} ${CFLAGS} -D${COMPILER} -o ${@} ${<}
+	@${CC} ${CFLAGS} -D${COMPILER} -o ${@} $(shell find ${SRCDIR} -name ${notdir ${@:.o=.c}})
 	@rm ${COMPILER}/${ODIR}/*.d
 
 #
@@ -141,7 +127,7 @@ ${COMPILER}${SUFFIX}/${ODIR}/%.o: %.S
 #
 # The rule for creating an object library.
 #
-${COMPILER}${SUFFIX}/%.a:
+${LIBDIR}/${ARCHDIR}/%.a:
 	@if [ 'x${VERBOSE}' = x ];     \
 	 then                          \
 	     echo "  AR    ${@}";      \
