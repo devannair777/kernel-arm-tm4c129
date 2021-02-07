@@ -23,6 +23,7 @@ PREFIX=arm-none-eabi
 SRCS=$(notdir $(shell find $(SRCDIR) -name '*.c'))
 SRC_OBJS=$(patsubst %.c,${COMPILER}/${ODIR}/%.o,$(SRCS))
 LIB_OBJS=$(wildcard $(LIBDIR)/${ODIR}/*.o)
+LIB_AR=$(LIBDIR)/ar/*.a
 
 #
 # The command for calling the compiler.

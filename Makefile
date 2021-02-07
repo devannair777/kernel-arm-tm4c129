@@ -30,12 +30,14 @@ IPATH=inc
 
 DEPS=${SRC_OBJS} 
 
-ifdef LIB
-DEPS+=${LIB_OBJS}
+ifndef NOLIB
+DEPS+=${LIB_AR}
 endif
 
-all:clean ${COMPILER} ${BIN}
 ${BIN}: ${DEPS}
+
+all: ${COMPILER} ${BIN}
+
 
 #
 # The rule to clean out all the build products.

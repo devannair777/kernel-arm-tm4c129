@@ -10,7 +10,7 @@
  */ 
 #include <stdint.h>
 
-void main(void);
+extern int main(void);
 
 extern uintptr_t __stack_top;
 

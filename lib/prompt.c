@@ -4,8 +4,11 @@ __attribute__((constructor))
 void serial_init(void)
 {
 	SYSCTL->RCGCUART |= (1<<0);                     //Run Mode UART0 Enable
+	GPIOA_AHB->DIR |= 0x02;							//PA0->RX,PA1->TX
+	GPIOA_AHB->LOCK = 0x4c4f434b;					
+	GPIOA_AHB->DEN |= 0x3;							//PA0,PA1 Digital Enable
 	GPIOA_AHB->AFSEL = 0x03;                        //Alternate Function Select
-	GPIOA_AHB->PCTL |= (1<<4*1)|(1<<4*0);           //PMC n Bitfield Encoding
+	GPIOA_AHB->PCTL |= (1<<4*1)|(1<<4*0);           //PMC n Bitfield Encoding = 0x1 for PA0 and PA1
 	
 	
 /* 	BRD = 25,000,000 / (16 * 9600) = 162.76041666666666666666666666667

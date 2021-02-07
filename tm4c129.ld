@@ -60,6 +60,10 @@ SECTIONS
 	{
 		*(.text)
         *(.text.*)
+
+		KEEP(*(.init))
+		KEEP(*(.fini))
+
 		/* .ctors */
 		*crtbegin.o(.ctors)
 		*crtbegin?.o(.ctors)

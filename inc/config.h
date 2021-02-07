@@ -5,6 +5,6 @@
 #include <stdint.h>
 
 #define     XTAL_25MHZ      0
-
+//#define MODULES 
 
 #endif //CONFIG_H
