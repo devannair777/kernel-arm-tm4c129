@@ -1,4 +1,4 @@
-#include "syshw.h"
+#include "config.h"
 
 #ifdef MODULES
 #include "module_test.h"
@@ -6,11 +6,8 @@
 #include "state_machine.h"
 #endif
 
-
 int main(void)
-{
-    default_clock_init();
-    
+{    
     #ifdef MODULES
     module_t();
     #else
@@ -19,4 +16,3 @@ int main(void)
 
     return 0;
 }
-

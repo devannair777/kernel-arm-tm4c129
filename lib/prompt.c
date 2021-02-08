@@ -1,6 +1,5 @@
 #include "lib/prompt.h"
 
-__attribute__((constructor))
 void serial_init(void)
 {
 	SYSCTL->RCGCUART |= (1<<0);                     //Run Mode UART0 Enable

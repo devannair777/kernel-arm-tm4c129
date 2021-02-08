@@ -4,9 +4,14 @@
 #include "cmsis/tm4c_cmsis.h"
 
 void board_led_init();
+
 void board_led_on(char color);
+
 void board_led_off(char color);
+
 uint32_t get_tick_val_safe();
+
+void default_clock_init(void);
 
 void delay_ms(uint32_t delay);
 

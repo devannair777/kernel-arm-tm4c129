@@ -1,4 +1,4 @@
-#include "lib/prompt.h"
+#include "rom_modules/board_modules.h"
 #include "board_test.h"
 
 #define T_ON          1000U
@@ -6,8 +6,8 @@
 
 void state_machine_exec()
 {
-    serial_init();
-    board_led_init();
+    clk_init();
+    led_init();
 
     while(1)
     {
@@ -19,7 +19,6 @@ void state_machine_exec()
         switch (state)
         {
             case INITIAL:
-                printk("Initializing state machine ...\r\n");
                 state = OFF_STATE;
                 start_time = get_tick_val_safe();
                 break;
@@ -28,7 +27,7 @@ void state_machine_exec()
                 
                 if((get_tick_val_safe() - start_time) > T_ON)
                 {
-                    board_led_off('3');
+                    led_off('3');
                     state = OFF_STATE;
                     start_time = get_tick_val_safe();
                 }
@@ -38,7 +37,7 @@ void state_machine_exec()
             case OFF_STATE:
                 if((get_tick_val_safe() - start_time) > T_OFF)
                 {
-                    board_led_on('3');
+                    led_on('3');
                     state = ON_STATE;
                     start_time = get_tick_val_safe();
                 }
