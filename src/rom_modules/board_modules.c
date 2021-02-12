@@ -3,13 +3,50 @@
     ROM based Module Setup Tests
  */
 
+void _putchar(char c)
+{
+    
+}
+
+/* 
+    UART Configuration
+ */
+void uart_init(void)
+{
+	ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_UART0);        //Run Mode UART0 Enable
+	ROM_SysCtlPeripheralEnable(GPIOA_AHB_BASE);
+    ROM_GPIODirModeSet(GPIOA_AHB_BASE,
+                        GPIO_PIN_1,
+                        GPIO_DIR_MODE_OUT);
+    ROM_GPIODirModeSet(GPIOA_AHB_BASE,
+                        GPIO_PIN_0,
+                        GPIO_DIR_MODE_IN);                 //PA0->RX,PA1->TX
+	
+	ROM_GPIOPinTypeUART(GPIOA_AHB_BASE
+                        ,GPIO_PIN_0 | GPIO_PIN_1);         //Alternate Function Select
+	ROM_GPIOPinConfigure(GPIO_PA1_U0TX);                   //PMC n Bitfield Encoding = 0x1 for PA0 and PA1
+    ROM_GPIOPinConfigure(GPIO_PA0_U0RX);
+	
+	
+/* 	BRD = 25,000,000 / (16 * 9600) = 162.76041666666666666666666666667
+    UARTFBRD[DIVFRAC] = integer(0.76041667 * 64 + 0.5) = 49 */
+	
+	ROM_UARTDisable(UART0_BASE);                          //1. Disable the UART.
+	ROM_UARTConfigSetExpClk(UART0_BASE,
+                            F_CPU,
+                            UART_BDR,
+                            UART_CONFIG_WLEN_8 |  UART_CONFIG_STOP_ONE | UART_CONFIG_PAR_NONE
+    );                                                   //5. Configure the UART clock source frequency of 25MHz
+	ROM_UARTEnable(UART0_BASE);                          //7. Enable the UART.	
+		
+}
 /* 
     MOSC Configuration
  */
 
 void clk_init()
 {
-    ROM_SysCtlClockFreqSet(SYSCTL_USE_OSC,25000000UL);  // Use External MOSC Crystal (25 MHz on board) 
+    ROM_SysCtlClockFreqSet(SYSCTL_USE_OSC,F_CPU);       // Use External MOSC Crystal (25 MHz on board) 
                                                         //for 25 MHz System Clock
 }
 /* 

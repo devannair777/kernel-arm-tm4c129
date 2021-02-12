@@ -6,8 +6,12 @@
 #include <stdbool.h>
 #include "driverlib/rom.h"
 #include "driverlib/gpio.h"
+#include "driverlib/uart.h"
 #include "driverlib/sysctl.h"
+#include "config.h"
 #include "cmsis/tm4c_cmsis.h"
+
+void uart_init(void);
 
 void clk_init(void);
 

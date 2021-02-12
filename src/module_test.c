@@ -51,7 +51,7 @@ void rom_led_test()
 void rom_serial_test()
 {
     clk_init();
-    serial_init();
+    uart_init();
     printk("Initializing Module Test Routine ...\r\n");
     while(1);
 
