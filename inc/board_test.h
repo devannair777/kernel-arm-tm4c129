@@ -2,6 +2,7 @@
 #define __BOARDTEST_H__
 
 #include "cmsis/tm4c_cmsis.h"
+#include "config.h"                                  
 
 void board_led_init();
 

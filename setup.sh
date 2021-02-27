@@ -11,6 +11,12 @@ sudo apt-get install libcap-dev
 ###libusb-dev1.0 header files
 cd lm4tools/lm4flash
 make
+##The make output
+#cc -Wall -I/usr/include/libusb-1.0  lm4flash.c -L/usr/lib/x86_64-linux-gnu -lusb-1.0  -o lm4flash
+## pkg-config --cflags libusb-1.0
+#-I/usr/include/libusb-1.0
+## pkg-config --libs libusb-1.0
+#-L/usr/lib/x86_64-linux-gnu -lusb-1.0
 sudo cp lm4tools/lm4flash/lm4flash /usr/bin/
 
 ###Remove the lm4tools git repository
@@ -28,3 +34,14 @@ rm -rf lm4tools
 ###Download and install openocd, GNU-gdb
 ###Use the startup script for the EK-TM4C129x board
 ###openocd -f openocd/tcl/board/ti_ek-tm4c1294xl.cfg
+
+##Use Serial Communication(Doesnt work with wsl), install cu with
+#apt install cu
+##Check the device ID of the ICDI with dmesg as
+#dmesg | egrep --color 'serial|ttyS'
+##OR
+#ls /dev/tty*
+##Call-up to the serial device with cu as
+## cu -l /dev/<device-id> -s <baud-rate>
+#E.g. cu -l /dev/ttyS0 -s 9600  
+##To exit enter tilde dot (~.).

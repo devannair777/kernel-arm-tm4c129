@@ -3,15 +3,48 @@
     ROM based Module Setup Tests
  */
 
-void _putchar(char c)
-{
-    
-}
-
 /* 
     UART Configuration
  */
-void uart_init(void)
+
+void ConfigureUART(uint32_t sys_clk)
+{
+    //
+    // Enable the GPIO Peripheral used by the UART.
+    //
+    ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOA);
+
+    //
+    // Enable UART0
+    //
+    ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_UART0);
+
+    //
+    // Configure GPIO Pins for UART mode.
+    //
+    ROM_GPIOPinConfigure(GPIO_PA0_U0RX);
+    ROM_GPIOPinConfigure(GPIO_PA1_U0TX);
+    ROM_GPIOPinTypeUART(GPIOA_AHB_BASE, GPIO_PIN_0 | GPIO_PIN_1);
+
+    //
+    // Initialize the UART for console I/O.
+    //
+    UARTStdioConfig(0, UART_BDR, sys_clk);
+}
+
+void Q_onAssert(char const *module, int loc) {
+    /* TBD: damage control */
+    (void)module; /* avoid the "unused parameter" compiler warning */
+    (void)loc;    /* avoid the "unused parameter" compiler warning */
+    //GPIOF_AHB->DATA_Bits[LED_RED | LED_GREEN | LED_BLUE] = 0xFFU; /* all ON */
+#ifndef NDEBUG /* debug build? */
+    while (loc != 0) { /* tie the CPU in this endless loop */
+    }
+#endif
+    NVIC_SystemReset(); /* reset the CPU */
+}
+
+void uart_init(uint32_t sys_clk)
 {
 	ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_UART0);        //Run Mode UART0 Enable
 	ROM_SysCtlPeripheralEnable(GPIOA_AHB_BASE);
@@ -33,7 +66,7 @@ void uart_init(void)
 	
 	ROM_UARTDisable(UART0_BASE);                          //1. Disable the UART.
 	ROM_UARTConfigSetExpClk(UART0_BASE,
-                            F_CPU,
+                            sys_clk,
                             UART_BDR,
                             UART_CONFIG_WLEN_8 |  UART_CONFIG_STOP_ONE | UART_CONFIG_PAR_NONE
     );                                                   //5. Configure the UART clock source frequency of 25MHz
@@ -44,10 +77,24 @@ void uart_init(void)
     MOSC Configuration
  */
 
-void clk_init()
+uint32_t clk_init()
 {
-    ROM_SysCtlClockFreqSet(SYSCTL_USE_OSC,F_CPU);       // Use External MOSC Crystal (25 MHz on board) 
-                                                        //for 25 MHz System Clock
+    uint32_t sys_clk = ROM_SysCtlClockFreqSet(
+                            SYSCTL_USE_OSC,              // Use External MOSC Crystal (25 MHz on board) 
+                            F_CPU);                      //for 25 MHz System Clock
+
+    
+/*  ROM_SysTickIntEnable();
+    ROM_SysTickPeriodSet(F_CPU/1000);                   //There shoud be F_CPU/1000 clock ticks between interrupts
+    ROM_SysTickEnable(); */                             // if the interrupts are to be trigerred every 1 ms.
+
+    SysTick->LOAD = F_CPU/1000;                         //Since SysTick Interrupt should be called every millisecond
+                                                        // or 1000 times per seccond.
+    SysTick->VAL  = 0U;
+    SysTick->CTRL = (1U << 2) | (1U << 1) | 1U;
+    
+    return sys_clk;
+    
 }
 /* 
     MOSC Configuration Ends
@@ -129,6 +176,24 @@ void led_off(char index)
                             0x0);
     }
 }
+
+/* uCOS-II application hooks ===============================================*/
+
+
+
+void App_TaskCreateHook (OS_TCB *ptcb) { (void)ptcb; }
+void App_TaskDelHook    (OS_TCB *ptcb) { (void)ptcb; }
+void App_TaskIdleHook(void) { }
+void App_TaskReturnHook(OS_TCB  *ptcb){(void)ptcb;}
+void App_TaskStatHook(void){}
+void App_TaskSwHook(void){}
+void App_TCBInitHook(OS_TCB *ptcb){(void)ptcb;}
+void App_TimeTickHook(void){}
+
+
+/*..........................................................................*/
+
+
 /* 
     Board LED //Ends
  */

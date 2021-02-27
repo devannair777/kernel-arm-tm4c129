@@ -6,11 +6,16 @@ void default_clock_init()
 {
     SYSCTL->MOSCCTL  &= ~(0x08 | 0x04); // ~(SYSCTL_MOSCCTL_PWRDN |SYSCTL_MOSCCTL_NOXTAL );	
     SYSCTL->RSCLKCFG |=  0x00300000;    //SYSCTL_RSCLKCFG_OSCSRC_MOSC; 
+
+    SysTick->LOAD = F_CPU/1000;         //Since SysTick Interrupt should be called every millisecond
+                                        // or 1000 times per seccond.
+    SysTick->VAL  = 0U;
+    SysTick->CTRL = (1U << 2) | (1U << 1) | 1U;
 } 
 
 
 
-void SysTick_Handler()
+void Timer0A_IRQHandler()
 {
     tick_ctr ++;
 }
