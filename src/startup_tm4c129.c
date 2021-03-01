@@ -21,6 +21,13 @@ extern uint32_t __data_end__;
 extern uint32_t __bss_start__;
 extern uint32_t __bss_end__;
 
+void SystemInit()                                                ;
+
+void assert_failed(char const *module, int loc)                  ;
+__attribute__ ((noreturn)) /* QP assertion handler */
+void Q_onAssert(char const *module, int loc)                     ; 
+
+
 void Reset_Handler(void)                                         ;
 void Processor_Fault_Handler(void)                               ;
 void System_Handler(void)                   __attribute__((weak));
@@ -338,19 +345,23 @@ void _init(void)
 }
 void Reset_Handler(void)
 {
-    extern int __libc_init_array(void);
+    //extern int __libc_init_array(void); Need to check if safe for C to call static constructors
     //Reset Entry code
+    //extern unsigned const __data_load;
+
+    SystemInit();
 
     uint32_t initialized_data_size = (uintptr_t)&(__data_end__) - (uintptr_t)&(__data_start__);
     //Copy all initialized variables from .text section to .data section in SRAM
-    uint32_t* exidx_end = startup_memcpy(& __exidx_end,& __data_start__,initialized_data_size);
-    uint32_t* sbss = exidx_end + initialized_data_size; // Go to beginning of .bss sector
+    //uint32_t* exidx_end = 
+    startup_memcpy(&__data_start__,& __exidx_end,initialized_data_size);
+    //uint32_t* sbss = exidx_end + initialized_data_size; // Go to beginning of .bss sector
     //Set all uninitialized variables to zero in .bss section
     uint32_t uninitialized_data_size = (uintptr_t)&(__bss_end__) - (uintptr_t)&(__bss_start__);
-    startup_memset(sbss,0,uninitialized_data_size);    
+    startup_memset(&__bss_start__,0,uninitialized_data_size);    
 
     //Initialize all the static constructors
-    __libc_init_array();
+    // __libc_init_array();
     //Main starts here
     main();
 }
@@ -358,6 +369,13 @@ void Reset_Handler(void)
 void System_Handler(void)
 {
     //Default Exception Handler Code
+     __asm volatile (
+        "    ldr r0,=str_sys\n\t"
+        "    mov r1,#1\n\t"
+        "    b assert_failed\n\t"
+        "str_sys: .asciz \"System Fault\"\n\t"
+        "  .align 2\n\t"
+    );
 }
 
 void Interrupt_Service_Routine(void)
@@ -370,11 +388,25 @@ void Processor_Fault_Handler(void)
 {
     // Processor Fault code
         __asm volatile (
-        "    ldr r0,=str_PFault\n\t"
+        "    ldr r0,=str_hrd\n\t"
         "    mov r1,#1\n\t"
-        "str_PFault: .asciz \"Processor Fault\"\n\t"
+        "    b assert_failed\n\t"
+        "str_hrd: .asciz \"Processor Fault\"\n\t"
         "  .align 2\n\t"
     );
+}
+
+__attribute__ ((naked, noreturn))
+void assert_failed(char const *module, int loc) {
+    /* re-set the SP in case of stack overflow */
+    __asm volatile (
+        "  MOV sp,%0\n\t"
+        : : "r" (&__stack_top));
+
+    Q_onAssert(module, loc); /* call the application-specific QP handler */
+
+    for (;;) { /* should not be reached, but just in case loop forever... */
+    }
 }
 /*
 

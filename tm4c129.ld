@@ -79,7 +79,7 @@ SECTIONS
  		*(.dtors)
 
 		*(.rodata*)
-
+		. = ALIGN(4);
 		KEEP(*(.eh_frame*))
 	} > FLASH
 	
@@ -114,6 +114,8 @@ SECTIONS
 
 	.data : AT (__exidx_end)
 	{
+		. = ALIGN(4);
+		__data_load = LOADADDR (.data);
 		__data_start__ = .;
 		*(vtable)
 		*(.data)

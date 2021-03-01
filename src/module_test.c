@@ -1,5 +1,5 @@
 #include "lib/prompt.h"
-#include "board_test.h"
+#include "board_util.h"
 #include <math.h>
 #include "rom_modules/board_modules.h"
 
@@ -23,7 +23,7 @@ void def_math_test()
     // for reason why fpuenable and fpulazystacking is called before clock
     FPUEnable();
     FPULazyStackingEnable();
-    default_clock_init();
+    //default_clock_init();
     serial_init();
     printk("Testing Math module\r\n");
     int cnt = 0;
@@ -42,8 +42,8 @@ void def_math_test()
 
 void def_led_test()
 {
-    default_clock_init();
-    board_led_init();
+    //default_clock_init();
+    BoardUtil_Init();
     while(1)
     {
         board_led_on('3');
@@ -55,7 +55,7 @@ void def_led_test()
 
 void def_serial_test()
 {
-    default_clock_init();
+    //default_clock_init();
     serial_init();
     printk("Initializing Module Test Routine ...\r\n");
     while(1);
@@ -63,7 +63,7 @@ void def_serial_test()
 
 void rom_led_test()
 {
-    clk_init();
+    //clk_init();
     led_init();
     while(1)
     {

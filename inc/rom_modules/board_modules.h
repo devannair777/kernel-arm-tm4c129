@@ -38,7 +38,6 @@ enum EventSignals {
         Q_onAssert(this_module, __LINE__); \
     } else (void)0
 
-void Q_onAssert(char const *module, int loc);
 
 extern Active *AO_BlinkyButton;
 

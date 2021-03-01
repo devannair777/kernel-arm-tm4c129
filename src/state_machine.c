@@ -1,5 +1,5 @@
 #include "rom_modules/board_modules.h"
-#include "board_test.h"
+#include "board_util.h"
 
 #define T_ON          1000U
 #define T_OFF         2000U
@@ -113,8 +113,8 @@ void def_aoModelTest()
 
     //INT8U err;
 
-        default_clock_init();
-        board_led_init();       /* initialize the BSP */
+        BoardUtil_Init();
+        BoardLED_Init();       /* initialize the BSP */
         OSInit();               /* initialize uC/OS-II */
 
         /* create AO and start it */

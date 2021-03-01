@@ -32,18 +32,6 @@ void ConfigureUART(uint32_t sys_clk)
     UARTStdioConfig(0, UART_BDR, sys_clk);
 }
 
-void Q_onAssert(char const *module, int loc) {
-    /* TBD: damage control */
-    (void)module; /* avoid the "unused parameter" compiler warning */
-    (void)loc;    /* avoid the "unused parameter" compiler warning */
-    //GPIOF_AHB->DATA_Bits[LED_RED | LED_GREEN | LED_BLUE] = 0xFFU; /* all ON */
-#ifndef NDEBUG /* debug build? */
-    while (loc != 0) { /* tie the CPU in this endless loop */
-    }
-#endif
-    NVIC_SystemReset(); /* reset the CPU */
-}
-
 void uart_init(uint32_t sys_clk)
 {
 	ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_UART0);        //Run Mode UART0 Enable

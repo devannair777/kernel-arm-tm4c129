@@ -1,26 +1,21 @@
-#include "board_test.h"
+#include "board_util.h"
 
 static uint32_t volatile tick_ctr;
 
-void default_clock_init()
+void BoardUtil_Init()
 {
-    SYSCTL->MOSCCTL  &= ~(0x08 | 0x04); // ~(SYSCTL_MOSCCTL_PWRDN |SYSCTL_MOSCCTL_NOXTAL );	
-    SYSCTL->RSCLKCFG |=  0x00300000;    //SYSCTL_RSCLKCFG_OSCSRC_MOSC; 
+    SystemCoreClockUpdate(); 
 
-    SysTick->LOAD = F_CPU/1000;         //Since SysTick Interrupt should be called every millisecond
-                                        // or 1000 times per seccond.
-    SysTick->VAL  = 0U;
-    SysTick->CTRL = (1U << 2) | (1U << 1) | 1U;
+    BoardLED_Init();
+
 } 
 
-
-
-void Timer0A_IRQHandler()
+void BoardUtil_Start()
 {
-    tick_ctr ++;
+    SysTick_Config(SystemCoreClock / OS_TICKS_PER_SEC);
 }
 
-void board_led_init()
+void BoardLED_Init()
 {
     SYSCTL->RCGCGPIO |= 0x20 | (1<<12);        //Enable Port f and Port N for LED
     
@@ -133,6 +128,11 @@ void board_led_off(char color)
     }
 }
 
+void Timer0A_IRQHandler()
+{
+    tick_ctr ++;
+}
+
 uint32_t get_tick_val_safe()
 {
     uint32_t curr_tick;
@@ -148,6 +148,18 @@ void delay_ms(uint32_t delay)
 {
     uint32_t start = get_tick_val_safe();
     while((get_tick_val_safe() - start) < delay);
+}
+
+/*..........................................................................*/
+/* error-handling function called by exception handlers in the startup code */
+void Q_onAssert(char const *module, int loc) {
+    /* TBD: damage control */
+    (void)module; /* avoid the "unused parameter" compiler warning */
+    (void)loc;    /* avoid the "unused parameter" compiler warning */
+    GPIOF_AHB->DATA_BITS_R[LED4 | LED3] = 0xFFU; /* all ON */
+    GPION->DATA_BITS_R[LED2 | LED1] = 0xFFU; /* all ON */
+
+    NVIC_SystemReset(); /* reset the CPU */
 }
 
 
