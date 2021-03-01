@@ -31,17 +31,7 @@ IPATH=inc:\
 		$(QPC)/src:\
 		$(QP_PORT_DIR):\
 		$(QPC)/3rd_party/ucos-ii/Source:\
-		$(QPC)/3rd_party/ucos-ii/Ports/ARM-Cortex-M/ARMv7-M/GNU:\
-		$(QPC)/3rd_party/CMSIS/Include:\
-		$(QPC)/3rd_party/ek-tm4c123gxl
-#
-# The default rule.
-#
-
-
-${BIN}: ${DEPS}
-
-#all: ${COMPILER} ${DEPS}
+		$(QPC)/3rd_party/ucos-ii/Ports/ARM-Cortex-M/ARMv7-M/GNU
 
 
 #
@@ -144,8 +134,10 @@ SRCS=$(notdir $(shell find $(SRCDIR) -name '*.c'))
 SRC_OBJS=$(patsubst %.c,%.o,$(SRCS))
 SRC_OBJS_EXT:=$(addprefix $(COMPILER)/$(ODIR)/,${SRC_OBJS})
 
-echotest:
-	@echo ${ASM_OBJS_EXT}
+show:
+	@echo "ASM :  ${ASM_SRCS}\n"
+	@echo "QPC :  ${Q_SRCS}\n"
+	@echo "SRC :  ${SRCS}\n"
 
 qpc: ${COMPILER} ${QSRCS_OBJS_EXT} 
 
@@ -157,7 +149,8 @@ all: ${COMPILER} ${BIN}
 
 ${BIN}: ${ASM_OBJS_EXT} ${SRC_OBJS_EXT} ${QSRCS_OBJS_EXT}
 	@${CC} ${CFLAGS} -D${COMPILER} $(QPC)/include/qstamp.c -o $(COMPILER)/$(ODIR)/qstamp.o
-	${LD} ${LDFLAGS}  $^ $(COMPILER)/$(ODIR)/qstamp.o ${LIBDIR}/${LIB_AR} -T ${LDNAME}  -o $@  
+	@echo "LD	-T ${LDNAME}"
+	@${LD} ${LDFLAGS}  $^ $(COMPILER)/$(ODIR)/qstamp.o ${LIBDIR}/${LIB_AR} -T ${LDNAME}  -o $@  
 	@${OBJCOPY} -O binary $@ ${@:.axf=.bin}	
 
 $(COMPILER)/$(ODIR)/%.o : %.c

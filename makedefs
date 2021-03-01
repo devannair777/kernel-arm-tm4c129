@@ -52,7 +52,8 @@ CFLAGS=-mthumb             \
        -Wall               \
        -pedantic           \
        -DPART_${PART}      \
-       -c -DQ_SPY
+       -c                  \
+       -DQ_SPY
 
 #
 # The command for calling the Assembler.

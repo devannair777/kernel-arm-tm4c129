@@ -188,7 +188,10 @@ void App_TaskReturnHook(OS_TCB  *ptcb){(void)ptcb;}
 void App_TaskStatHook(void){}
 void App_TaskSwHook(void){}
 void App_TCBInitHook(OS_TCB *ptcb){(void)ptcb;}
-void App_TimeTickHook(void){}
+void App_TimeTickHook(void)
+{
+    TimeEvent_tick();
+}
 
 
 /*..........................................................................*/

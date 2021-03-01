@@ -1234,7 +1234,7 @@ typedef struct {                                    /*!< USB0 Structure         
   */
 
 typedef struct {                                    /*!< GPIOA_AHB Structure                                                   */
-  __I  uint32_t  RESERVED0[255];
+  __IO uint32_t  DATA_BITS_R[255];                  /*!< GPIO Data Atomic Operation                                            */
   __IO uint32_t  DATA;                              /*!< GPIO Data                                                             */
   __IO uint32_t  DIR;                               /*!< GPIO Direction                                                        */
   __IO uint32_t  IS;                                /*!< GPIO Interrupt Sense                                                  */

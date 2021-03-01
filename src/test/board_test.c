@@ -36,24 +36,74 @@ void board_led_init()
     __enable_irq();
 }
 
+void LED1_On()
+{
+    GPION->DATA_BITS_R[LED1] = LED1;    //Atomic Write
+}
+
+
+void LED2_On()
+{
+    GPION->DATA_BITS_R[LED2] = LED2;    //Atomic Write
+}
+
+
+void LED3_On()
+{
+    GPIOF_AHB->DATA_BITS_R[LED3] = LED3;    //Atomic Write
+}
+
+
+void LED4_On()
+{
+    GPIOF_AHB->DATA_BITS_R[LED4] = LED4;    //Atomic Write
+}
+
+void LED1_Off()
+{
+    GPION->DATA_BITS_R[LED1] = 0;    //Atomic Write
+}
+
+
+void LED2_Off()
+{
+    GPION->DATA_BITS_R[LED2] = 0;    //Atomic Write
+}
+
+
+void LED3_Off()
+{
+    GPIOF_AHB->DATA_BITS_R[LED3] = 0;    //Atomic Write
+}
+
+
+void LED4_Off()
+{
+    GPIOF_AHB->DATA_BITS_R[LED4] = 0;    //Atomic Write
+}
+
 void board_led_on(char index)
 {
     switch(index)
     {
         case '4':
-            GPIOF_AHB->DATA |= 0x01;
+//            GPIOF_AHB->DATA |= 0x01;
+            GPIOF_AHB->DATA_BITS_R[LED4] = LED4;    //Atomic Write
         break;
         case '3':
-            GPIOF_AHB->DATA |= 0x10;
+ //           GPIOF_AHB->DATA |= 0x10;
+            GPIOF_AHB->DATA_BITS_R[LED3] = LED3;    //Atomic Write
         break;
         case '2':
-            GPION->DATA |= 0x01;
+//            GPION->DATA |= 0x01;
+            GPION->DATA_BITS_R[LED2] = LED2;        //Atomic Write
         break;
         case '1':
-            GPION->DATA |= 0x02;
+//            GPION->DATA |= 0x02;
+            GPION->DATA_BITS_R[LED1] = LED1;        //Atomic Write
         break;
         default:
-            GPIOF_AHB->DATA |= 0x01;
+            GPIOF_AHB->DATA_BITS_R[LED4] = LED4;    //Atomic Write
     }
 }
 
@@ -62,19 +112,24 @@ void board_led_off(char color)
     switch(color)
     {
         case '4':
-            GPIOF_AHB->DATA &= ~(0x01);
+//            GPIOF_AHB->DATA &= ~(0x01);
+            GPIOF_AHB->DATA_BITS_R[LED4] = 0;    //Atomic Write
         break;
         case '3':
-            GPIOF_AHB->DATA &= ~(0x10);
+//            GPIOF_AHB->DATA &= ~(0x10);
+            GPIOF_AHB->DATA_BITS_R[LED3] = 0;    //Atomic Write
         break;
         case '2':
-            GPION->DATA &= ~(0x01);
+ //           GPION->DATA &= ~(0x01);
+            GPION->DATA_BITS_R[LED2] = 0;        //Atomic Write
         break;
         case '1':
-            GPION->DATA &= ~(0x02);
+//            GPION->DATA &= ~(0x02);
+            GPION->DATA_BITS_R[LED1] = 0;        //Atomic Write
         break;
         default:
-            GPIOF_AHB->DATA &= ~(0x01);
+//            GPIOF_AHB->DATA &= ~(0x01);
+            GPIOF_AHB->DATA_BITS_R[LED4] = 0;    //Atomic Write
     }
 }
 

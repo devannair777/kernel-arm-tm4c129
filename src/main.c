@@ -11,7 +11,7 @@ int main(void)
     #ifdef MODULES
     module_t();
     #else
-    state_machine_exec();
+    def_aoModelTest();
     #endif
 
     return 0;
