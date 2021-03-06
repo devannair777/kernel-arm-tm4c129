@@ -6,7 +6,8 @@
 #include <uc_ao.h>
 #define F_CPU   25000000UL
 #define UART_BDR    9600
-#define PART_TM4C1294NCPDT
+#define PART_TM4C1294NCPDT // defined in makedefs
+                           // as PART=TM4C1294NCPDT
 #include "driverlib/pin_map.h"
 #define LED1    (1<<1)          /* PN1 */
 #define LED2    (1<<0)          /* PN0 */
@@ -15,6 +16,5 @@
 
 #define SW1     (1<<0)          /* PJ0 */
 #define SW2     (1<<1)          /* PJ1 */
-//#define MODULES 
 
 #endif //CONFIG_H

@@ -18,6 +18,9 @@ void SystemCoreClockUpdate()
         case 0x0:
             SystemCoreClock = 16000000UL;       /* PIOSC 16 MHz */
             break;
+        default:
+            SystemCoreClock = 25000000UL;       /* XTAL 25 MHz */
+            break;
     }
     if(usepll)
     {

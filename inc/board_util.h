@@ -1,17 +1,35 @@
 #ifndef __BOARDUTIL_H__
 #define __BOARDUTIL_H__
 
-#include "config.h"                                  
+#include "config.h" 
+
+enum EventSignals {
+    BUTTON_PRESSED_SIG = USER_SIG,
+    BUTTON_RELEASED_SIG,
+    TIMEOUT_SIG,
+    /* ... */
+};
+
+#define BSP_ASSERT(check_)                 \
+    if (!(check_)) {                       \
+        Q_onAssert(this_module, __LINE__); \
+    } else (void)0
+
+
+extern Active *AO_BlinkyButton;
 
 void BoardLED_Init();
 
-void board_led_on(char color);
+void BoardSW_Init();
 
-void board_led_off(char color);
+void BoardUart_Init();
 
+/* Polling delay */
 uint32_t get_tick_val_safe();
 
 void BoardUtil_Init(void);
+
+void BoardUtil_Start();
 
 void delay_ms(uint32_t delay);
 

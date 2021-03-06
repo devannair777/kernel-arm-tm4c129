@@ -27,7 +27,7 @@ typedef struct {
 static void BlinkyButton_dispatch(BlinkyButton * const me, Event const * const e) {
     if (e->sig == INIT_SIG) {
          //BSP_ledBlueOff();
-         board_led_on('2');
+         LED2_Off();
          TimeEvent_arm(&me->te, me->blink_time * 3U, 0U);
          me->state = OFF_STATE;
     }
@@ -37,7 +37,7 @@ static void BlinkyButton_dispatch(BlinkyButton * const me, Event const * const e
             switch (e->sig) {
                 case TIMEOUT_SIG: {
                     //BSP_ledGreenOn();
-                    board_led_on('1');
+                    LED1_On();
                     TimeEvent_arm(&me->te, me->blink_time, 0U);
                     me->state = ON_STATE;
                     break;
@@ -46,7 +46,7 @@ static void BlinkyButton_dispatch(BlinkyButton * const me, Event const * const e
                     //INT8U err; /* uC/OS-II error status */
 
                     //BSP_ledBlueOn();
-                    board_led_on('2');
+                    LED2_On();
 
                     me->blink_time >>= 1; /* shorten the blink time by factor of 2 */
                     if (me->blink_time == 0U) {
@@ -56,7 +56,7 @@ static void BlinkyButton_dispatch(BlinkyButton * const me, Event const * const e
                 }
                 case BUTTON_RELEASED_SIG: {
                     //BSP_ledBlueOff();
-                    board_led_off('2');
+                    LED2_Off();
                     break;
                 }
             }
@@ -66,7 +66,7 @@ static void BlinkyButton_dispatch(BlinkyButton * const me, Event const * const e
             switch (e->sig) {
                 case TIMEOUT_SIG: {
                    // BSP_ledGreenOff();
-                    board_led_off('1');
+                    LED1_Off();
                     TimeEvent_arm(&me->te, me->blink_time * 3U, 0U);
                     me->state = OFF_STATE;
                     break;
@@ -75,7 +75,7 @@ static void BlinkyButton_dispatch(BlinkyButton * const me, Event const * const e
                     //INT8U err; /* uC/OS-II error status */
 
                     //BSP_ledBlueOn();
-                    board_led_on('2');
+                    LED2_On();
                     me->blink_time >>= 1; /* shorten the blink time by factor of 2 */
                     if (me->blink_time == 0U) {
                         me->blink_time = INITIAL_BLINK_TIME;
@@ -84,7 +84,7 @@ static void BlinkyButton_dispatch(BlinkyButton * const me, Event const * const e
                 }
                 case BUTTON_RELEASED_SIG: {
                    // BSP_ledBlueOff();
-                    board_led_off('2');
+                    LED2_Off();
                     break;
                 }
             }
@@ -113,8 +113,7 @@ void def_aoModelTest()
 
     //INT8U err;
 
-        BoardUtil_Init();
-        BoardLED_Init();       /* initialize the BSP */
+        BoardUtil_Init();       /* initialize the BSP */
         OSInit();               /* initialize uC/OS-II */
 
         /* create AO and start it */
@@ -127,8 +126,7 @@ void def_aoModelTest()
                     sizeof(stack_blinkyButton),
                     0U);
 
-        //BSP_start(); /* configure and start the interrupts */
-
+        BoardUtil_Start(); /* configure and start the interrupts */
         OSStart(); /* start the uC/OS-II scheduler... */
 
 }

@@ -2,8 +2,11 @@
 
 void serial_init(void)
 {
+	__DSB();
 	SYSCTL->RCGCUART |= (1<<0);                     //Run Mode UART0 Enable
+	__DSB();
 	SYSCTL->RCGCGPIO |= (1<<0);
+	__DSB();
 	GPIOA_AHB->DIR |= 0x02;							//PA0->RX,PA1->TX
 	GPIOA_AHB->LOCK = 0x4c4f434b;					
 	GPIOA_AHB->DEN |= 0x3;							//PA0,PA1 Digital Enable

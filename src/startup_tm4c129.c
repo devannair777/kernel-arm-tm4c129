@@ -9,12 +9,13 @@
 #######################################################################################
  */ 
 #include <stdint.h>
+#include "inc/hw_types.h"
+#include "inc/hw_nvic.h"
 
 extern int main(void);
 
 extern uintptr_t __stack_top;
 
-extern uint32_t __etext;
 extern uint32_t __exidx_end;
 extern uint32_t __data_start__;
 extern uint32_t __data_end__;
@@ -343,6 +344,7 @@ void _init(void)
 {
     //Init
 }
+
 void Reset_Handler(void)
 {
     //extern int __libc_init_array(void); Need to check if safe for C to call static constructors
@@ -363,6 +365,17 @@ void Reset_Handler(void)
     //Initialize all the static constructors
     // __libc_init_array();
     //Main starts here
+
+    /* Reset Handler is an Interrupt Service Routine , so the execution mode is Previleged,
+        So if FPU is required,it should be enabled here */
+    
+    #ifdef FPUENABLED
+        HWREG(NVIC_CPAC) = ((HWREG(NVIC_CPAC) &
+                         ~(NVIC_CPAC_CP10_M | NVIC_CPAC_CP11_M)) |
+                        NVIC_CPAC_CP10_FULL | NVIC_CPAC_CP11_FULL);     // FPUEnable();
+        HWREG(NVIC_FPCC) |= NVIC_FPCC_ASPEN | NVIC_FPCC_LSPEN;          // FPULazyStackingEnable();
+    #endif
+
     main();
 }
 

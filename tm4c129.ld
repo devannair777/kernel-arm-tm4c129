@@ -48,6 +48,7 @@ GROUP(libc_nano.a libm.a libnosys.a libgcc.a)
  */
 ENTRY(Reset_Handler)
 __stack_size = 1024;
+__heap_size = 256;
 SECTIONS
 {
 
@@ -160,13 +161,25 @@ SECTIONS
 		__bss_end__ = .;
 	} > RAM
 
-	.heap (COPY):
+	.heap :
 	{
+		. = ALIGN(4);
+		__heap_start__ = .;
+		. = . + __heap_size;
+		. = ALIGN(4);
 		__end__ = .;
+		__HeapLimit = __end__;
 		end = __end__;
 		*(.heap*)
-		__HeapLimit = .;
+		
 	} > RAM
+
+	/* Remove information from the standard libraries */
+    /DISCARD/ : {
+        libc.a ( * )
+        libm.a ( * )
+        libgcc.a ( * )
+    }
 
 	/* .stack_dummy section doesn't contains any symbols. It is only
 	 * used for linker to calculate size of stack sections, and assign

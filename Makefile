@@ -13,6 +13,9 @@ LISTDIR=listing
 TARGETDIR=bin
 BIN=$(COMPILER)/$(TARGETDIR)/main.axf
 
+IGNORE_FLD=src/boot% \
+		   src/imu%
+
 # The base directory for TivaWare.
 
 ROOT=.
@@ -74,10 +77,6 @@ endif
 
 VPATH = \
 	$(SRCDIR) \
-	$(SRCDIR)/bootloader \
-	$(SRCDIR)/imu \
-	$(SRCDIR)/rom_modules \
-	$(SRCDIR)/test \
 	$(QPC)/src/qf \
 	$(QPC)/src/qs \
 	$(QP_PORT_DIR) \
@@ -122,7 +121,7 @@ ASM_SRCS := \
 	
 Q_SRCS += $(QP_SRCS)
 Q_SRCS += $(RTOS_SRCS)
-Q_SRCS += $(QS_SRCS)
+#Q_SRCS += $(QS_SRCS)
 
 QSRCS_OBJS:=$(patsubst %.c,%.o,$(Q_SRCS))
 QSRCS_OBJS_EXT:=$(addprefix $(COMPILER)/$(ODIR)/,${QSRCS_OBJS})
@@ -130,7 +129,8 @@ QSRCS_OBJS_EXT:=$(addprefix $(COMPILER)/$(ODIR)/,${QSRCS_OBJS})
 ASM_OBJS:=$(patsubst %.s,%.o,$(ASM_SRCS))
 ASM_OBJS_EXT:=$(addprefix $(COMPILER)/$(ODIR)/,${ASM_OBJS})
 
-SRCS=$(notdir $(shell find $(SRCDIR) -name '*.c'))
+SRCS_A=$(shell find $(SRCDIR) -name '*.c')
+SRCS=$(notdir $(filter-out $(IGNORE_FLD),$(SRCS_A)))
 SRC_OBJS=$(patsubst %.c,%.o,$(SRCS))
 SRC_OBJS_EXT:=$(addprefix $(COMPILER)/$(ODIR)/,${SRC_OBJS})
 
@@ -138,6 +138,7 @@ show:
 	@echo "ASM :  ${ASM_SRCS}\n"
 	@echo "QPC :  ${Q_SRCS}\n"
 	@echo "SRC :  ${SRCS}\n"
+	@echo "SRCA :  ${SRCS_A}\n"
 
 qpc: ${COMPILER} ${QSRCS_OBJS_EXT} 
 
@@ -146,6 +147,15 @@ srcs: ${COMPILER} ${SRC_OBJS_EXT}
 asms: ${COMPILER} ${ASM_OBJS_EXT}
 
 all: ${COMPILER} ${BIN}
+
+module:
+	@sh -c "make all mode=MODULES"
+
+fpu:
+	@sh -c "make all fpumode=ENABLED mode=MODULES"
+
+run:
+	@sh -c "make all fpumode=ENABLED"
 
 ${BIN}: ${ASM_OBJS_EXT} ${SRC_OBJS_EXT} ${QSRCS_OBJS_EXT}
 	@${CC} ${CFLAGS} -D${COMPILER} $(QPC)/include/qstamp.c -o $(COMPILER)/$(ODIR)/qstamp.o
@@ -162,6 +172,8 @@ $(COMPILER)/$(ODIR)/%.o : %.s
 	@echo "AS	$<"
 	@${AS} ${AFLAGS} $< -o $@
 	@rm ./-Iinc
+
+
 
 
 

@@ -19,6 +19,9 @@ endif
 #******************************************************************************
 
 PREFIX=arm-none-eabi
+mode=SM
+fpumode=DISABLED
+bootopts=NONE
 
 #
 # The command for calling the compiler.
@@ -53,9 +56,12 @@ CFLAGS=-mthumb             \
        -pedantic           \
        -DPART_${PART}      \
        -c                  \
-       -DQ_SPY
+       -D${mode}           \
+       -DFPU${fpumode}     \
+       -D${bootopts}
+#To add debugging trace -DQ_SPY 
 
-#
+#            
 # The command for calling the Assembler.
 #
 AS = ${PREFIX}-as
