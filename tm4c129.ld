@@ -169,9 +169,7 @@ SECTIONS
 		. = ALIGN(4);
 		__end__ = .;
 		__HeapLimit = __end__;
-		end = __end__;
 		*(.heap*)
-		
 	} > RAM
 
 	/* Remove information from the standard libraries */

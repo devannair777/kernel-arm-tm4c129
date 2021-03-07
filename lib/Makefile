@@ -1,5 +1,7 @@
 ODIR=obj
 ARDIR=ar
+CPU=-mcpu=cortex-m4
+FPU=-mfpu=fpv4-sp-d16 -mfloat-abi=softfp
 LIBS=$(shell find . -name '*.c')
 LIBFILES=$(notdir ${LIBS})
 LIB_OBJS=$(patsubst %.c,${ODIR}/%.o,$(LIBFILES))
@@ -19,7 +21,11 @@ CFLAGS=-mthumb             \
        -DPART_${PART}      \
        -c
 
-all: ${LIB_OBJS} ${ARDIR}/driverlib.a
+all: dir ${LIB_OBJS} ${ARDIR}/driverlib.a
+
+dir: 
+	@mkdir -p  ${ODIR}
+	@mkdir -p  ${ARDIR}
 
 clean: 
 	@rm  ${ODIR}/*.o

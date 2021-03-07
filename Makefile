@@ -14,7 +14,8 @@ TARGETDIR=bin
 BIN=$(COMPILER)/$(TARGETDIR)/main.axf
 
 IGNORE_FLD=src/boot% \
-		   src/imu%
+		   src/imu% \
+		   src/fsm%
 
 # The base directory for TivaWare.
 
@@ -75,14 +76,16 @@ endif
 
 ##### Defns for RTEF Integration ##### 
 
+SRC_FLD=$(sort $(dir $(filter-out $(IGNORE_FLD),$(shell find $(SRCDIR) -name '*.c'))))
+
 VPATH = \
-	$(SRCDIR) \
+	$(SRC_FLD) \
 	$(QPC)/src/qf \
-	$(QPC)/src/qs \
 	$(QP_PORT_DIR) \
 	$(QPC)/3rd_party/ucos-ii/Source \
 	$(QPC)/3rd_party/ucos-ii/Ports/ARM-Cortex-M/ARMv7-M \
 	$(QPC)/3rd_party/ucos-ii/Ports/ARM-Cortex-M/ARMv7-M/GNU \
+	#$(QPC)/src/qs \#
 	
 QP_SRCS := \
 	qep_hsm.c \
@@ -139,6 +142,7 @@ show:
 	@echo "QPC :  ${Q_SRCS}\n"
 	@echo "SRC :  ${SRCS}\n"
 	@echo "SRCA :  ${SRCS_A}\n"
+	@echo "SRC_FLD :  ${SRC_FLD}\n"
 
 qpc: ${COMPILER} ${QSRCS_OBJS_EXT} 
 

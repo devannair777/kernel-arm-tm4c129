@@ -15,7 +15,7 @@ enum EventSignals {
         Q_onAssert(this_module, __LINE__); \
     } else (void)0
 
-
+/* Active objects... */
 extern Active *AO_BlinkyButton;
 
 void BoardLED_Init();
