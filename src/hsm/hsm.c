@@ -45,6 +45,7 @@ static QState BlinkyButton_DEFAULT(BlinkyButton * const me,  QEvt const * const 
             if(me->blink_time == 0)
             {
                 me->blink_time = INITIAL_BLINK_TIME;
+                QTimeEvt_armX(&me->te,me->blink_time,0);
             }
             else
             {
