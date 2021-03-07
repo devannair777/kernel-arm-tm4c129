@@ -10,16 +10,17 @@ static QState BlinkyButton_DEFAULT(BlinkyButton * const me,  QEvt const * const 
 static QState BlinkyButton_ON(BlinkyButton * const me,  QEvt const * const e); 
 static QState BlinkyButton_OFF(BlinkyButton * const me,  QEvt const * const e) ;
 
-static BlinkyButton l_blinkyButton;
+BlinkyButton l_blinkyButton;
 
 QActive * const BlinkyButtonAO = &(l_blinkyButton.super);
 
 void BlinkyButton_ctor(void)
 {
     BlinkyButton *me = &(l_blinkyButton);
-    QTimeEvt_ctorX(&me->te,&me->super,TIMEOUT_SIG,0);
-    QActive_ctor(&me->super,Q_ACTION_CAST(&BlinkyButton_INITIAL));
     me->blink_time = INITIAL_BLINK_TIME;
+    QActive_ctor(&me->super,Q_ACTION_CAST(&BlinkyButton_INITIAL));
+    QTimeEvt_ctorX(&me->te,&me->super,TIMEOUT_SIG,0);
+    
 }
 
 /*  Protected State Transition Functions */

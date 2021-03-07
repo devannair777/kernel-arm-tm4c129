@@ -133,12 +133,12 @@ void App_TimeTickHook(void)
             if ((buttons.depressed & SW1) != 0U) { /* is SW1 depressed? */
                 /* post the "button-pressed" event from ISR */
                 static QEvt const button_pressed = {BUTTON_PRESSED_SIG, 0U, 0U};
-                QF_PUBLISH(&button_pressed,NULL);
+                QACTIVE_POST_X(BlinkyButtonAO,&button_pressed,1,NULL);
             }
             else { /* the button is released */
                 /* post the "button-released" event from ISR */
                 static QEvt const button_released = {BUTTON_PRESSED_SIG, 0U, 0U};
-                QF_PUBLISH(&button_released,NULL);
+                QACTIVE_POST_X(BlinkyButtonAO,&button_released,1,NULL);
             }
         }
 }
