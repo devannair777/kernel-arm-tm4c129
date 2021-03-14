@@ -1099,9 +1099,11 @@ __user_initial_stackheap PROC
 ; void Q_onAssert   (char const *file, int line);
 ;******************************************************************************
         EXPORT  assert_failed
+        IMPORT  Q_onAssert
 assert_failed PROC
 
         LDR    sp,=__initial_sp  ; re-set the SP in case of stack overflow
+        BL     Q_onAssert        ; call the application-specific handler
 
         B      .                 ; should not be reached, but just in case...
 
