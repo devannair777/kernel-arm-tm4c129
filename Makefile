@@ -42,16 +42,26 @@ IPATH=inc:\
 # The rule to clean out all the build products.
 #
 clean:
-	@rm -rf ${COMPILER} ${wildcard *~}
+	@rm -rf ${COMPILER}/$(TARGETDIR)
+	@rm -rf ${COMPILER}/$(ODIR)
+	@rm -rf ${COMPILER}/$(LISTDIR)
 
 #
 # The rule to create the target & object directories.
 #
-${COMPILER}:
+${COMPILER}: ${ODIR} ${TARGETDIR} ${LISTDIR}
 	@mkdir -p ${COMPILER}
 	@mkdir -p ${COMPILER}/${ODIR}
 	@mkdir -p ${COMPILER}/${TARGETDIR}
 	@mkdir -p ${COMPILER}/${LISTDIR}
+
+${ODIR}:
+	@mkdir -p ${COMPILER}/${ODIR}
+${TARGETDIR}:
+	@mkdir -p ${COMPILER}/${TARGETDIR}
+${LISTDIR}:
+	@mkdir -p ${COMPILER}/${LISTDIR}
+
 #
 # Flash the binary
 flash: ${BIN}
@@ -167,7 +177,7 @@ ${BIN}: ${ASM_OBJS_EXT} ${SRC_OBJS_EXT} ${QSRCS_OBJS_EXT}
 	@${LD} ${LDFLAGS}  $^ $(COMPILER)/$(ODIR)/qstamp.o ${LIBDIR}/${LIB_AR} -T ${LDNAME}  -o $@  
 	@${OBJCOPY} -O binary $@ ${@:.axf=.bin}	
 
-$(COMPILER)/$(ODIR)/%.o : %.c
+$(COMPILER)/$(ODIR)/%.o : %.c 
 	@echo "CC	$<"
 	@${CC} ${CFLAGS} -D${COMPILER} $< -o $@
 	@rm ${COMPILER}/${ODIR}/*.d
@@ -176,8 +186,6 @@ $(COMPILER)/$(ODIR)/%.o : %.s
 	@echo "AS	$<"
 	@${AS} ${AFLAGS} $< -o $@
 	@rm ./-Iinc
-
-
 
 
 

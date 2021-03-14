@@ -13,8 +13,6 @@ void BoardSW_Init();
 
 void BoardUart_Init();
 
-extern QActive * const BlinkyButtonAO ;
-
 void BoardUtil_Init(void);
 
 void BoardUtil_Start();

@@ -12,7 +12,6 @@ enum BlinkyButtonSignals {
     BUTTON_RELEASED_SIG
 };
 
-
 typedef struct {
     /* Protected */
     QActive super;
@@ -21,8 +20,7 @@ typedef struct {
     QTimeEvt te;
 }BlinkyButton;
 
-
-extern QHsm * const BlinkyButtonHSM; /* Pointer to State Machine */
+extern QActive * const BlinkyButtonAO ;
 
 void BlinkyButton_ctor(void);
 

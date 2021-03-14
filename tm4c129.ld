@@ -98,9 +98,7 @@ SECTIONS
 	} > FLASH
 	__exidx_end = .;
 
-	
-
-	.stack : 
+	.stack (NOLOAD): 
 	{
 		. = ALIGN(4);
 		__stack_start__ = .;
@@ -112,8 +110,7 @@ SECTIONS
 
 	} > RAM
 
-
-	.data : AT (__exidx_end)
+	.data : AT (__exidx_end )
 	{
 		. = ALIGN(4);
 		__data_load = LOADADDR (.data);
@@ -149,9 +146,8 @@ SECTIONS
 		__data_end__ = .;
 
 	} > RAM
-
 	
-	.bss :
+	.bss (NOLOAD):
 	{
 		. = ALIGN(4);
 		__bss_start__ = .;
@@ -161,16 +157,19 @@ SECTIONS
 		__bss_end__ = .;
 	} > RAM
 
-	.heap :
+	PROVIDE ( end = _ebss );
+    PROVIDE ( _end = _ebss );
+    PROVIDE ( __end__ = _ebss );
+
+	.heap (NOLOAD):
 	{
 		. = ALIGN(4);
 		__heap_start__ = .;
 		. = . + __heap_size;
 		. = ALIGN(4);
-		__end__ = .;
-		__HeapLimit = __end__;
-		*(.heap*)
+		__heap_end__ = .;
 	} > RAM
+
 
 	/* Remove information from the standard libraries */
     /DISCARD/ : {
@@ -178,6 +177,16 @@ SECTIONS
         libm.a ( * )
         libgcc.a ( * )
     }
+	
+	/* 
+		.heap         00000010  20002014  00004460  00020404  2**0
+                  ALLOC												when __heap_size > 0
+
+		 5 .heap         00000000  20002014  20002014  00020404  2**0  when  __heap_size = 0
+                  CONTENTS  WHY ???
+	
+	
+	 */
 
 	/* .stack_dummy section doesn't contains any symbols. It is only
 	 * used for linker to calculate size of stack sections, and assign

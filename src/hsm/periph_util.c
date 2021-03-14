@@ -1,5 +1,7 @@
 #include "hsm/periph_util.h"
-#include "utils/uartstdio.h"
+#ifndef ARM_CC
+	#include "utils/uartstdio.h"
+#endif
 
 static uint32_t volatile tick_ctr;
 extern uint32_t SystemCoreClock;
@@ -23,7 +25,9 @@ void BoardUtil_Start()
 
 void BoardUart_Init()
 {
-    UARTStdioConfig(0, UART_BDR, SystemCoreClock);
+		#ifndef ARM_CC
+			UARTStdioConfig(0, UART_BDR, SystemCoreClock);
+		#endif
 
     #ifdef REMOTE_BOOT
           	/* UART7 or SSI? for CC3100 */
@@ -137,7 +141,7 @@ void App_TimeTickHook(void)
             }
             else { /* the button is released */
                 /* post the "button-released" event from ISR */
-                static QEvt const button_released = {BUTTON_PRESSED_SIG, 0U, 0U};
+                static QEvt const button_released = {BUTTON_RELEASED_SIG, 0U, 0U};
                 QACTIVE_POST_X(BlinkyButtonAO,&button_released,1,NULL);
             }
         }

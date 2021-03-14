@@ -1,7 +1,6 @@
 #include "hsm/hsm.h"
 #include "hsm/periph_util.h"
 
-
 enum { INITIAL_BLINK_TIME = (OS_TICKS_PER_SEC / 4) };
 static char_t const Q_this_module_[] = "QACTIVE_HSM_TEST";
 
@@ -9,18 +8,18 @@ static QState BlinkyButton_INITIAL(BlinkyButton * const me, void const * const p
 static QState BlinkyButton_DEFAULT(BlinkyButton * const me,  QEvt const * const e);
 static QState BlinkyButton_ON(BlinkyButton * const me,  QEvt const * const e); 
 static QState BlinkyButton_OFF(BlinkyButton * const me,  QEvt const * const e) ;
+void def_aoModelTest(); 
 
-BlinkyButton l_blinkyButton;
+static BlinkyButton l_blinkyButton;
 
-QActive * const BlinkyButtonAO = &(l_blinkyButton.super);
+QActive * const BlinkyButtonAO = (QActive *)&l_blinkyButton;
 
 void BlinkyButton_ctor(void)
 {
     BlinkyButton *me = &(l_blinkyButton);
     me->blink_time = INITIAL_BLINK_TIME;
-    QActive_ctor(&me->super,Q_ACTION_CAST(&BlinkyButton_INITIAL));
+    QActive_ctor(&me->super,Q_STATE_CAST(&BlinkyButton_INITIAL));
     QTimeEvt_ctorX(&me->te,&me->super,TIMEOUT_SIG,0);
-    
 }
 
 /*  Protected State Transition Functions */
@@ -109,8 +108,6 @@ static QState BlinkyButton_OFF(BlinkyButton * const me,  QEvt const * const e)
 OS_STK stack_blinkyButton[100]; /* task stack */
 static QEvt const *blinkyButton_queue[10];
 
-void def_aoModelTest(); 
-
 void def_aoModelTest()
 {
     BlinkyButton_ctor();
@@ -124,7 +121,7 @@ void def_aoModelTest()
                       blinkyButton_queue,      /* storage for the AO's queue */
                       Q_DIM(blinkyButton_queue), /* queue's length [entries] */
                       stack_blinkyButton,           /* stack storage */
-                      sizeof(stack_blinkyButton),   /* sack size [bytes] */
+                      sizeof(stack_blinkyButton),   /* stack size [bytes] */
                       (QEvt const *)0);      /* initialization event */
 
     QF_run();    /* Forever Loop */

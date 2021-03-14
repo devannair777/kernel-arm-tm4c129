@@ -96,9 +96,10 @@ CPUcpsid(void)
     //
     // Read PRIMASK and disable interrupts.
     //
-    mrs     r0, PRIMASK;
-    cpsid   i;
-    bx      lr
+					mrs     r0, PRIMASK;
+					cpsid   i;
+					bx      lr;
+	//return 
 }
 #endif
 #if defined(ccs)
@@ -178,6 +179,10 @@ CPUprimask(void)
     //
     mrs     r0, PRIMASK;
     bx      lr
+//	(
+//		"mrs     r0, PRIMASK\n"
+//    "bx      lr");
+//	return 0;
 }
 #endif
 #if defined(ccs)
@@ -256,7 +261,11 @@ CPUcpsie(void)
     //
     // Read PRIMASK and enable interrupts.
     //
-    mrs     r0, PRIMASK;
+    //mrs     r0, PRIMASK;
+    //cpsie   i;
+    //bx      lr
+	
+		mrs     r0, PRIMASK;
     cpsie   i;
     bx      lr
 }
