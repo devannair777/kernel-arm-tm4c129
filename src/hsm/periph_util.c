@@ -1,7 +1,6 @@
 #include "hsm/periph_util.h"
-#ifndef ARM_CC
-	#include "utils/uartstdio.h"
-#endif
+#include "utils/uartstdio.h"
+
 
 static uint32_t volatile tick_ctr;
 extern uint32_t SystemCoreClock;
@@ -25,9 +24,8 @@ void BoardUtil_Start()
 
 void BoardUart_Init()
 {
-		#ifndef ARM_CC
-			UARTStdioConfig(0, UART_BDR, SystemCoreClock);
-		#endif
+		UARTStdioConfig(0, UART_BDR, SystemCoreClock);
+
 
     #ifdef REMOTE_BOOT
           	/* UART7 or SSI? for CC3100 */
