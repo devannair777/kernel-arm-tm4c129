@@ -28,7 +28,7 @@ static QState BlinkyButton_INITIAL(BlinkyButton * const me, void const * const p
     (void)par;
    /*   Transition to initial state of LED1 OFF */
 
-    return Q_TRAN(&BlinkyButton_DEFAULT);
+    return Q_TRAN(&BlinkyButton_OFF);
 }
 
 static QState BlinkyButton_DEFAULT(BlinkyButton * const me,  QEvt const * const e)
@@ -36,10 +36,7 @@ static QState BlinkyButton_DEFAULT(BlinkyButton * const me,  QEvt const * const 
     QState status_=0;
     switch(e->sig)
     {
-        case INIT_SIG:
-            QTimeEvt_armX(&me->te,me->blink_time,0);
-            status_ = Q_TRAN(&BlinkyButton_OFF);
-            break;
+        
         case BUTTON_PRESSED_SIG:
             /* Turn LED2 ON  & reduce blinking time by factor of 2*/
             if(me->blink_time == 0)
@@ -90,6 +87,10 @@ static QState BlinkyButton_OFF(BlinkyButton * const me,  QEvt const * const e)
     QState status_=0;
     switch(e->sig)
     {
+        case INIT_SIG:
+            QTimeEvt_armX(&me->te,me->blink_time,0);
+            status_ = Q_TRAN(&BlinkyButton_OFF);
+            break;
         case TIMEOUT_SIG:
             /* Transition to ON State of LED1*/
             LED1_On();
